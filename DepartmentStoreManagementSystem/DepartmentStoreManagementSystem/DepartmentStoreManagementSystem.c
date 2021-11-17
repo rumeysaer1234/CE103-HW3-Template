@@ -84,17 +84,30 @@ void d_search()
 {
     char ch;
     int i;
-    const char* menu[] = { "   By Code","   By Rate","   By Quantity","   Back to main menu" };
+    //const char* menu[] = { "   By Code","   By Rate","   By Quantity","   Back to main menu" };
     system("cls");
     //textbackground(11);
     //textcolor(0);
     window(25, 50, 20, 32);
     gotoxy(33, 18);
     printf("SEARCH MENU");
+
+
     for (i = 0; i <= 3; i++)
     {
         gotoxy(30, 22 + i + 1);
-        printf("%s\n\n\n", menu[i]);
+
+        switch (i)
+        {
+            case 0: printf("%s\n\n\n","   By Code"); break;
+            case 1: printf("%s\n\n\n", "   By Rate"); break;
+            case 2: printf("%s\n\n\n", "   By Quantity"); break;
+            case 3: printf("%s\n\n\n", "   Back to main menu"); break;
+        default:
+            break;
+        }
+
+        //printf("%s\n\n\n", menu[i]);
     }
     curser(4);
 }

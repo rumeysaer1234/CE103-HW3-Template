@@ -8,6 +8,7 @@
 
 int main(int argc, char* argv[]) {
 
+
 	//this variable keeps language setting that stored in file
 	char langConfig[2 + 1] = { 0 };
 	//language selection from console 0=en 1=tr

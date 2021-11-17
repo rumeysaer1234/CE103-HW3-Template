@@ -154,7 +154,7 @@ int getId(char* line)
 	int idInt = 0;
 	//find comma to extract id
 	pch = strchr(line, ',');
-	//calculate commad index
+	//calculate comma index
 	index = pch - line;
 	//copy ID as string
 	memcpy(idStr, line, index);
