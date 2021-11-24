@@ -8,6 +8,9 @@
 #include<ctype.h>
 #include<windows.h>
 
+#include "translate.h"
+#include "message.h"
+
 #define ANS 15
 #define ACS 4
 COORD coord = { 0,0 }; // this is global variable
@@ -45,6 +48,7 @@ void bill();
 void edit();
 void add();
 void del();
+void lang();
 void exit();
 
 /*declaration of display submenu functions*/
@@ -56,6 +60,17 @@ void d_all();
 /*start of main*/
 int main()
 {
+    //this variable keeps language setting that stored in file
+    char langConfig[2 + 1] = { 0 };
+    //language selection from console 0=en 1=tr
+    int  langSelection = 0;
+
+    //get current language setting from lang.conf file its "en" or "tr"
+    getTranslateLang(langConfig);
+
+    //set application language setting but setting is not set to file
+    setTranslateLang(langConfig, false);
+
     d_mainmenu();
     return 0;
 }
@@ -64,20 +79,21 @@ void d_mainmenu()
 {
     int i;
     char ch;
-    const char* menu[] = { "   Calculate Bill","   Add Goods","   Edit Goods","   Display All ","   Search", "   Delete Goods","   Exit" };
+    const char* menu[] = { "   Calculate Bill","   Add Goods","   Edit Goods","   Display All ","   Search", "   Delete Goods","   Change Language","   Exit" };
     system("cls");
     //textbackground(11);
     //textcolor(0);
     //_setcursortype(_NOCURSOR);
-    window(25, 50, 20, 32);
-    gotoxy(33, 18);
-    printf("MAIN MENU");
-    for (i = 0; i <= 6; i++)
+    window(25, 55, 20, 32);
+    gotoxy(36, 18);
+    printTranslateLang(main_menu);
+    printf("\n");
+    for (i = 0; i <= 7; i++)
     {
         gotoxy(30, 22 + i + 1);
         printf("%s\n\n\n", menu[i]);
     }
-    curser(7);
+    curser(8);
 }
 
 void d_search()
@@ -90,7 +106,8 @@ void d_search()
     //textcolor(0);
     window(25, 50, 20, 32);
     gotoxy(33, 18);
-    printf("SEARCH MENU");
+    printTranslateLang(search_menu);
+    printf("\n");
 
 
     for (i = 0; i <= 3; i++)
@@ -99,10 +116,10 @@ void d_search()
 
         switch (i)
         {
-            case 0: printf("%s\n\n\n","   By Code"); break;
-            case 1: printf("%s\n\n\n", "   By Rate"); break;
-            case 2: printf("%s\n\n\n", "   By Quantity"); break;
-            case 3: printf("%s\n\n\n", "   Back to main menu"); break;
+        case 0: printf("%s\n\n\n", "   By Code"); break;
+        case 1: printf("%s\n\n\n", "   By Rate"); break;
+        case 2: printf("%s\n\n\n", "   By Quantity"); break;
+        case 3: printf("%s\n\n\n", "   Back to main menu"); break;
         default:
             break;
         }
@@ -135,7 +152,7 @@ void curser(int no)
         ch = _getch();
         if (ch == '\r')
         {
-            if (no == 7)
+            if (no == 8)
             {
                 if (count == 1) bill();
                 else if (count == 2) add();
@@ -143,6 +160,7 @@ void curser(int no)
                 else if (count == 4) d_all();
                 else if (count == 5) d_search();
                 else if (count == 6) del();
+                else if (count == 7) lang();
                 else   exit(0);
             }
             if (no == 4)
@@ -163,85 +181,91 @@ void highlight(int no, int count)
         //textbackground(11);
         //textcolor(0);
         gotoxy(30, 23);
-        printf("   By Code          ");
+        printTranslateLang(by_code1);
         gotoxy(30, 24);
-        printf("   By Rate          ");
+        printTranslateLang(by_rate1);
         gotoxy(30, 25);
-        printf("   By Quantity      ");
+        printTranslateLang(by_quantity1);
         gotoxy(30, 26);
-        printf("   Back to main menu");
+        printTranslateLang(back_to_main_menu1);
         //textcolor(0);
         //textbackground(2);
         switch (count)
         {
         case 1:
             gotoxy(30, 23);
-            printf(" - By Code          ");
+            printTranslateLang(by_code2);
             break;
         case 2:
             gotoxy(30, 24);
-            printf(" - By Rate          ");
+            printTranslateLang(by_rate2);
             break;
         case 3:
             gotoxy(30, 25);
-            printf(" - By Quantity      ");
+            printTranslateLang(by_quantity2);
             break;
         case 4:
             gotoxy(30, 26);
-            printf(" - Back to main menu");
+            printTranslateLang(back_to_main_menu2);
             break;
         }
     }
 
-    if (no == 7)
+    if (no == 8)
     {
         //textbackground(11);
         //textcolor(0);
         gotoxy(30, 23);
-        printf("   Calculate Bill ");
+        printTranslateLang(calculate_bill1);
         gotoxy(30, 24);
-        printf("   Add Goods      ");
+        printTranslateLang(add_goods1);
         gotoxy(30, 25);
-        printf("   Edit Goods     ");
+        printTranslateLang(edit_goods1);
         gotoxy(30, 26);
-        printf("   Display All    ");
+        printTranslateLang(display_all1);
         gotoxy(30, 27);
-        printf("   Search         ");
+        printTranslateLang(search1);
         gotoxy(30, 28);
-        printf("   Delete Goods   ");
+        printTranslateLang(delete_goods1);
         gotoxy(30, 29);
-        printf("   Exit           ");
+        printTranslateLang(change_language1);
+        gotoxy(30, 30);
+        printTranslateLang(exit1);
         //textcolor(0);
         //textbackground(2);
         switch (count)
         {
         case 1:
             gotoxy(30, 23);
-            printf(" - Calculate Bill ");
+            printTranslateLang(calculate_bill2);
             break;
         case 2:
             gotoxy(30, 24);
-            printf(" - Add Goods      ");
+            printTranslateLang(add_goods2);
             break;
         case 3:
             gotoxy(30, 25);
-            printf(" - Edit Goods     ");
+            printTranslateLang(edit_goods2);
             break;
         case 4:
             gotoxy(30, 26);
-            printf(" - Display All    ");
+            printTranslateLang(display_all2);
             break;
         case 5:
             gotoxy(30, 27);
-            printf(" - Search         ");
+            printTranslateLang(search2);
             break;
         case 6:
             gotoxy(30, 28);
-            printf(" - Delete Goods   ");
+            printTranslateLang(delete_goods2);
             break;
         case 7:
             gotoxy(30, 29);
-            printf(" - Exit           ");
+            printTranslateLang(change_language2);
+            break;
+        case 8:
+            gotoxy(30, 30);
+            printTranslateLang(exit2);
             break;
         }
     }
@@ -258,7 +282,7 @@ void bill()
     system("cls");
     dbill();
     gotoxy(26, 15);
-    printf("enter  \"end\" to finish input");
+    printTranslateLang(enter_end_to_finish_input);
     while (1)
     {
         gotoxy(25, 18);
@@ -266,12 +290,12 @@ void bill()
         gotoxy(25, 19);
         printf("                    ");
         gotoxy(25, 18);
-        printf("enter item code:");
+        printTranslateLang(enter_item_code);
         scanf("%s", x);
         if (strcmp(x, "end") == 0)
             break;
         gotoxy(25, 19);
-        printf("enter quantity:");
+        printTranslateLang(enter_quantity);
         scanf("%d", &q);
         rewind(file);
         while (fread(&item, sizeof(item), 1, file))
@@ -299,7 +323,8 @@ void bill()
     if (gtotal != 0)
     {
         gotoxy(30, j + 5);
-        printf("TOTAL AMOUNT = NRs. %6.2f", gtotal);
+        printTranslateLang(total_amount);
+        printf(" % 6.2f", gtotal);
     }
     fclose(file);
     _getch();
@@ -313,18 +338,18 @@ void dbill()
     //;
     for (i = 1; i <= 10; i++)
         printf("*");
-    printf(" * FASHION WEAR * ");
+    printTranslateLang(fashion_wear);
     for (i = 1; i <= 10; i++)
         printf("*");
     printf("\n\n");
     gotoxy(30, 11);
-    printf("Departmental Store");
+    printTranslateLang(department_store);
     //textcolor(1);
     gotoxy(32, 25);
-    printf("CUSTOMER'S BILL");
+    printTranslateLang(customers_bill);
     //textcolor(8);
     gotoxy(13, 27);
-    printf("SN.   Item Name     Quantity     Rate          Total");
+    printTranslateLang(sn_);
 
 }
 /*function to add records*/
@@ -336,7 +361,7 @@ void add()
     //textbackground(11);
     //textcolor(0);
     gotoxy(25, 25);
-    printf("Enter new record(Y/N)?");
+    printTranslateLang(enter_new_record);
     while (toupper(_getche()) == 'Y')
     {
         system("cls");
@@ -344,19 +369,19 @@ void add()
         c_code(y);
         strcpy(item.code, y);
         gotoxy(22, 28);
-        printf("Enter rate of the item:");
+        printTranslateLang(enter_rate_of_the_item);
         scanf("%f", &item.rate);
         gotoxy(22, 30);
-        printf("Enter quantity of the item:");
+        printTranslateLang(enter_quantity_of_the_item);
         scanf("%d", &item.quantity);
         gotoxy(22, 32);
-        printf("Enter name of the item:");
+        printTranslateLang(enter_name_of_the_item);
         scanf("%s", item.name);
         fseek(file, 0, SEEK_END);
         fwrite(&item, sizeof(item), 1, file);
         fclose(file);
         gotoxy(22, 34);
-        printf("Enter new record(Y/N)?");
+        printTranslateLang(enter_new_record_);
 
     }
     d_mainmenu();
@@ -373,11 +398,11 @@ void c_code(char y[])
         system("cls");
         window(20, 58, 23, 36);
         gotoxy(32, 18);
-        printf(" ADD ARTICLES ");
+        printTranslateLang(add_articles);
         flag = 1;
         rewind(file);
         gotoxy(22, 25);
-        printf("Enter new code of the article:");
+        printTranslateLang(enter_new_code_of_the_article);
         scanf(" %[^\n]", y);
         while (fread(&item, sizeof(item), 1, file) == 1)
         {
@@ -385,9 +410,9 @@ void c_code(char y[])
             {
                 flag = 0;
                 gotoxy(26, 30);
-                printf("code already exists");
+                printTranslateLang(code_already_exists);
                 gotoxy(29, 32);
-                printf("enter again");
+                printTranslateLang(enter_again);
                 _getch();
                 break;
             }
@@ -409,10 +434,10 @@ void edit()
     //textbackground(11);
     window(20, 63, 20, 46);
     gotoxy(35, 18);
-    printf("EDIT RECORDS");
+    printTranslateLang(edit_records);
     ;
     gotoxy(25, 23);
-    printf("enter item code: ");
+    printTranslateLang(enter_item_code4);
     scanf("%s", x);
     flag = check(x);
     if (flag == 0)
@@ -425,29 +450,33 @@ void edit()
             {
                 //textcolor(0);
                 gotoxy(25, 27);
-                printf("name       = %s", item.name);
+                printTranslateLang(name1);
+                printf("%s", item.name);
                 gotoxy(25, 28);
-                printf("code       = %s", item.code);
+                printTranslateLang(code1);
+                printf("%s", item.code);
                 gotoxy(25, 29);
-                printf("rate       = %g", item.rate);
+                printTranslateLang(rate1);
+                printf("%g", item.rate);
                 gotoxy(25, 30);
-                printf("quantity   = %d", item.quantity);
+                printTranslateLang(quantity1);
+                printf("%d", item.quantity);
                 gotoxy(25, 32);;
-                printf("Do you want to edit this record?(y/n):");
+                printTranslateLang(do_you_want_to_edit_this_record);
                 fflush(file);
                 if (toupper(_getche()) == 'Y')
                 {
                     //textcolor(0);
                     gotoxy(25, 34);
-                    printf("1- edit name ");
+                    printTranslateLang(edit_name);
                     gotoxy(25, 35);
-                    printf("2- edit code ");
+                    printTranslateLang(edit_code);
                     gotoxy(25, 36);
-                    printf("3- edit rate ");
+                    printTranslateLang(edit_rate);
                     gotoxy(25, 37);
-                    printf("4- edit quantity ");
+                    printTranslateLang(edit_quantity);
                     gotoxy(25, 39); ;
-                    printf(" enter your choice(1, 2, 3, 4) ");
+                    printTranslateLang(enter_your_choice);
                     scanf("%d", &choice);
                     switch (choice)
                     {
@@ -455,9 +484,9 @@ void edit()
                         system("cls");
                         window(23, 48, 20, 40);
                         gotoxy(35, 18);
-                        printf("EDIT RECORDS");
+                        printTranslateLang(edit_records);
                         gotoxy(25, 24);
-                        printf(" enter new name: ");
+                        printTranslateLang(enter_new_name);
                         scanf("%s", item.name);
                         size = sizeof(item);
                         fseek(file, -size, SEEK_CUR);
@@ -467,7 +496,7 @@ void edit()
                         system("cls");
                         window(23, 65, 20, 40);
                         gotoxy(35, 18);
-                        printf("EDIT RECORDS");
+                        printTranslateLang(edit_records);
                         gotoxy(25, 24);
                         c_code(y);
                         strcpy(item.code, y);
@@ -479,9 +508,9 @@ void edit()
                         system("cls");
                         window(23, 65, 20, 40);
                         gotoxy(35, 18);
-                        printf("EDIT RECORDS");
+                        printTranslateLang(edit_records);
                         gotoxy(25, 24);
-                        printf(" enter new rate: ");
+                        printTranslateLang(enter_new_rate);
                         scanf("%f", &item.rate);
                         size = sizeof(item);
                         fseek(file, -size, SEEK_CUR);
@@ -491,9 +520,9 @@ void edit()
                         system("cls");
                         window(23, 65, 20, 40);
                         gotoxy(35, 18);
-                        printf("EDIT RECORDS");
+                        printTranslateLang(edit_records);
                         gotoxy(25, 24);
-                        printf(" enter new quantity: ");
+                        printTranslateLang(enter_new_quantity);
                         scanf("%d", &item.quantity);
                         size = sizeof(item);
                         fseek(file, -size, 1);
@@ -501,7 +530,7 @@ void edit()
                         break;
                     }
                     gotoxy(27, 30);
-                    printf("--- item edited---");
+                    printTranslateLang(item_edited);
                     break;
                 }
             }
@@ -510,9 +539,9 @@ void edit()
     if (flag == 1)
     {
         gotoxy(32, 30);
-        printf("Item does not exist.");
+        printTranslateLang(item_does_not_exist);
         gotoxy(36, 32);
-        printf("TRY ABGAIN");
+        printTranslateLang(try_again);
     }
     _getch();
     fclose(file);
@@ -537,7 +566,7 @@ void d_all()
         if ((j % 20) == 0)
         {
             gotoxy(27, 47);/*textcolor(0)*/;
-            printf("Press any key to see more...........");
+            printTranslateLang(press_any_key_to_see_more);
             _getch();
             system("cls");
             dis_con();
@@ -549,7 +578,7 @@ void d_all()
     if (i == 26)
     {
         gotoxy(24, 30);
-        printf("-- no articles found --");
+        printTranslateLang(no_articles_found);
     }
     _getch();
     fclose(file);
@@ -567,10 +596,10 @@ void d_quan()
     rewind(file);
     i = 26;
     gotoxy(16, 20);;
-    printf("Enter lower range: ");
+    printTranslateLang(enter_lower_range);
     scanf("%d", &a);
     gotoxy(16, 21);
-    printf("Enter upper range:");
+    printTranslateLang(enter_upper_range);
     scanf("%d", &b);
     fflush(file);
     while (fread(&item, sizeof(item), 1, file))
@@ -583,7 +612,7 @@ void d_quan()
             if ((j % 20) == 0)
             {
                 gotoxy(27, 47);
-                printf("Press any key to see more...........");
+                printTranslateLang(press_any_key_to_see_more);
                 _getch();
                 system("cls");
                 dis_con();
@@ -596,7 +625,7 @@ void d_quan()
     if (i == 26)
     {
         gotoxy(28, 30);
-        printf(" No items found.");
+        printTranslateLang(no_items_found);
     }
     _getch();
     d_search();
@@ -614,10 +643,10 @@ void d_rate()
     rewind(file);
     i = 26;
     gotoxy(16, 20);;
-    printf("enter lower range: ");
+    printTranslateLang(enter_lower_range);
     scanf("%f", &a);
     gotoxy(16, 21);
-    printf("enter upper range: ");
+    printTranslateLang(enter_upper_range);
     scanf("%f", &b);
     fflush(file);
     while (fread(&item, sizeof(item), 1, file))
@@ -630,7 +659,7 @@ void d_rate()
             if ((j % 20) == 0)
             {
                 gotoxy(27, 47);
-                printf("press any key to see more...........");
+                printTranslateLang(press_any_key_to_see_more);
                 _getch();
                 system("cls");
                 dis_con();
@@ -643,7 +672,7 @@ void d_rate()
     if (i == 26)
     {
         gotoxy(28, 30);
-        printf(" no item found ");
+        printTranslateLang(no_items_found);
     }
     _getch();
     fclose(file);
@@ -661,7 +690,7 @@ void d_code()
     rewind(file);
     i = 26;
     gotoxy(16, 20);;
-    printf("enter item code: ");
+    printTranslateLang(enter_item_code);
     scanf("%s", x);
     fflush(file);
     while (fread(&item, sizeof(item), 1, file))
@@ -677,7 +706,7 @@ void d_code()
     if (i == 26)
     {
         gotoxy(28, 30);
-        printf("no item found");
+        printTranslateLang(no_items_found);
     }
     _getch();
     fclose(file);
@@ -693,18 +722,18 @@ void dis_con()
     ;
     for (i = 1; i <= 10; i++)
         printf("*");
-    printf(" * FASHION WEAR * ");
+    printTranslateLang(fashion_wear);
     for (i = 1; i <= 10; i++)
         printf("*");
     printf("\n\n");
     gotoxy(30, 11);
-    printf("Departmental Store");
+    printTranslateLang(department_store);
     //textcolor(1);
     gotoxy(32, 17);
-    printf("RECORDS");
+    printTranslateLang(records);
     //textcolor(8);
     gotoxy(18, 23);
-    printf("SN   Item Name   Item Code      Rate     Quantity");
+    printTranslateLang(sn_);
 }
 
 /*function to display in screen*/
@@ -723,15 +752,15 @@ void del()
 {
     int flag;
     char x[ANS];
-    FILE* file = NULL, * file1=NULL;
+    FILE* file = NULL, * file1 = NULL;
     system("cls");
     //textbackground(11);
     //textcolor(0);
     window(23, 51, 25, 34);
     gotoxy(29, 18);
-    printf("DELETE ARTICLES");
+    printTranslateLang(delete_articles);
     gotoxy(27, 27);
-    printf("enter item code: ");
+    printTranslateLang(enter_item_code);
     scanf("%s", x);
     flag = check(x);
     if (flag == 0)
@@ -745,16 +774,16 @@ void del()
                 fwrite(&item, sizeof(item), 1, file1);
         }
         gotoxy(27, 29);
-        printf("---item deleted---");
+        printTranslateLang(item_deleted);
         remove("record.txt");
         rename("record1.txt", "record.txt");
     }
     if (flag == 1)
     {
         gotoxy(25, 29);
-        printf("---item does not exist---");
+        printTranslateLang(item_does_not_exist);
         gotoxy(30, 31);
-        printf("TRY AGAIN");
+        printTranslateLang(try_again);
     }
     fclose(file1);
     fclose(file);
@@ -790,12 +819,12 @@ void window(int a, int b, int c, int d)
     //textcolor(1);
     for (i = 1; i <= 10; i++)
         printf("*");
-    printf(" * FASHION WEAR * ");
+    printTranslateLang(fashion_wear);
     for (i = 1; i <= 10; i++)
         printf("*");
     printf("\n\n");
     gotoxy(30, 11);
-    printf("Departmental Store");
+    printTranslateLang(department_store);
     //textcolor(4);
     for (i = a; i <= b; i++)
     {
@@ -839,4 +868,39 @@ void window(int a, int b, int c, int d)
     printf("\xbc");
     //textbackground(11);
     //textcolor(0);
+}
+
+void lang()
+{
+    window(25, 65, 20, 32);
+    gotoxy(38, 18);
+    printTranslateLang(change_language1);
+
+    //language selection from console 0=en 1=tr
+    int  langSelection = 0;
+
+
+    //ask for language
+    gotoxy(27, 22);
+    printf("----> for english press \"0\".\n");
+    gotoxy(27, 24);
+    printf("----> turkce icin \"1\"e basin.\n");
+    gotoxy(27, 26);
+    printTranslateLang(enter_your_choice1);
+    gotoxy(27, 27);
+    //get input
+    scanf("%d", &langSelection);
+
+
+    if (langSelection == APP_LANG_TR)
+    {
+        //if TR selected then set application language to Turkish 
+        setTranslateLang(TURKISH_L, true);
+    }
+    else {
+        //other cases set language to English 
+        setTranslateLang(ENGLISH_L, true);
+    }
+    
+    d_mainmenu();
 }
